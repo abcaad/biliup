@@ -229,6 +229,7 @@ impl FfmpegDownloader {
         // 分段回调
         // 触发分段回调
 
+        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
         callback(SegmentEvent::Segment(SegmentInfo {
             prev_file_path: output_file,
             segment_index: 0,
