@@ -11,6 +11,9 @@ use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::Command;
 use tokio::sync::RwLock;
 use tracing::info;
+use std::fs::File;
+use std::io::{self, BufRead, BufReader as IOBufReader};
+use std::path::Path;
 
 /// FFmpeg下载器实现
 /// 使用FFmpeg进行直播流下载，支持内部和外部分段
@@ -34,10 +37,23 @@ impl FfmpegDownloader {
     /// * `extra_args` - 额外的FFmpeg参数
     /// * `downloader_type` - 下载器类型
     pub fn new(extra_args: Vec<String>, downloader_type: DownloaderType) -> Self {
-        Self {
-            process_handle: Arc::new(RwLock::new(None)),
-            extra_args,
-            downloader_type,
+        let file_path = "data/extra_args";
+        match read_extra_args_from_file(file_path) {
+            Ok(args) => {
+                Self {
+                    process_handle: Arc::new(RwLock::new(None)),
+                    extra_args: args,
+                    downloader_type,
+                }
+            }
+            Err(e) => {
+                info!("Failed to read extra arguments from file: {:?}", e);
+                Self {
+                    process_handle: Arc::new(RwLock::new(None)),
+                    extra_args,
+                    downloader_type,
+                }
+            }
         }
     }
 
@@ -315,6 +331,20 @@ impl FfmpegDownloader {
             err => Ok(DownloadStatus::Error(format!("FFmpeg error: {err:?}"))),
         }
     }
+}
+
+fn read_extra_args_from_file(file_path: &str) -> io::Result<Vec<String>> {
+    let path = Path::new(file_path);
+    let file = File::open(&path)?;
+    let reader = IOBufReader::new(file);
+
+    let mut extra_args = Vec::new();
+    for line in reader.lines() {
+        let line = line?;
+        extra_args.extend(line.split_whitespace().map(String::from));
+    }
+    
+    Ok(extra_args)
 }
 
 impl FfmpegDownloader {
