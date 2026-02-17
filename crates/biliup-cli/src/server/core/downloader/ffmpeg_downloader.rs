@@ -26,6 +26,8 @@ pub struct FfmpegDownloader {
 
     /// 下载器类型
     pub downloader_type: DownloaderType,
+
+    pub extra_args_before_input: Vec<String>,
 }
 
 impl FfmpegDownloader {
@@ -37,23 +39,22 @@ impl FfmpegDownloader {
     /// * `extra_args` - 额外的FFmpeg参数
     /// * `downloader_type` - 下载器类型
     pub fn new(extra_args: Vec<String>, downloader_type: DownloaderType) -> Self {
-        let file_path = "data/extra_args";
-        match read_extra_args_from_file(file_path) {
-            Ok(args) => {
-                Self {
-                    process_handle: Arc::new(RwLock::new(None)),
-                    extra_args: args,
-                    downloader_type,
-                }
-            }
-            Err(e) => {
-                info!("Failed to read extra arguments from file: {:?}", e);
-                Self {
-                    process_handle: Arc::new(RwLock::new(None)),
-                    extra_args,
-                    downloader_type,
-                }
-            }
+        let mut args: Vec<String> = extra_args;
+        let mut extra_args_before_input: Vec<String> = Vec::new();
+
+        if let Ok(temp_args) = read_extra_args_from_file("data/extra_args") {
+            args.extend(temp_args);
+        }
+
+        if let Ok(temp_args) = read_extra_args_from_file("data/extra_args_before_input") {
+            extra_args_before_input = temp_args;
+        }
+
+        Self {
+            process_handle: Arc::new(RwLock::new(None)),
+            extra_args: args,
+            downloader_type,
+            extra_args_before_input
         }
     }
 
@@ -148,8 +149,13 @@ impl FfmpegDownloader {
             args.extend(["-headers".to_string(), headers_str]);
         }
 
+        args.extend(self.extra_args_before_input.clone());
+
         // -rw_timeout: 读写超时时间（微秒）
         // 防止网络卡顿导致无限等待
+        // args.extend(["-reconnect".to_string(), "1".to_string()]);
+        // args.extend(["-reconnect_streamed".to_string(), "1".to_string()]);
+        // args.extend(["-reconnect_max_retries".to_string(), "2".to_string()]);
         args.extend(["-rw_timeout".to_string(), "20000000".to_string()]);
 
         // 对于m3u8流的特殊处理
