@@ -527,9 +527,9 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
             index,
             studio: _,
             submit,
-            title,
-            filename,
-            desc,
+            ptitle,
+            pfilename,
+            pdesc,
         } => {
             add_part(
                 cli.user_cookie,
@@ -537,9 +537,9 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
                 index,
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
-                title,
-                filename,
-                desc,
+                ptitle,
+                pfilename,
+                pdesc,
             )
             .await?
         }

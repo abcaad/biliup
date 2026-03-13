@@ -146,15 +146,15 @@ pub enum Commands {
         
         /// Video 对象的 title
         #[arg(short, long)]
-        title: Option<String>,
+        ptitle: Option<String>,
 
         /// Video 对象的 filename
         #[arg(short, long)]
-        filename: String,
+        pfilename: String,
 
         /// Video 对象的 desc
         #[arg(short, long)]
-        desc: String,
+        pdesc: String,
 
         /// 将要添加到的分P序号 从1开始   为 0 时添加到末尾
         #[arg(long, default_value = "1")]

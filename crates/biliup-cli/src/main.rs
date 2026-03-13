@@ -126,9 +126,9 @@ async fn main() -> AppResult<()> {
             index,
             studio: _,
             submit,
-            title,
-            filename,
-            desc,
+            ptitle,
+            pfilename,
+            pdesc,
         } => {
             add_part(
                 user_cookie,
@@ -136,9 +136,9 @@ async fn main() -> AppResult<()> {
                 index,
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
-                title,
-                filename,
-                desc,
+                ptitle,
+                pfilename,
+                pdesc,
             )
             .await?
         }
