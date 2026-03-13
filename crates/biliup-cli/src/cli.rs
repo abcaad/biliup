@@ -101,6 +101,37 @@ pub enum Commands {
         #[command(flatten)]
         studio: Studio,
     },
+    /// 将分P转移到其他稿件
+    Transfer {
+        /// 提交接口
+        #[arg(long)]
+        submit: Option<SubmitOption>,
+
+        // Optional name to operate on
+        // name: Option<String>,
+        /// vid为稿件 av 或 bv 号  原分P所在稿件
+        #[arg(short, long)]
+        from_vid: Vid,
+
+        /// vid为稿件 av 或 bv 号  分P将转移到的稿件
+        #[arg(short, long)]
+        to_vid: Vid,
+
+        /// 将要转移的分P序号 从1开始
+        #[arg(long)]
+        index: usize,
+
+        /// 新视频添加到稿件最前面
+        #[arg(long, default_value = "false")]
+        insert: bool,
+
+        /// 保留原分P
+        #[arg(long, default_value = "false")]
+        retain: bool,
+
+        #[command(flatten)]
+        studio: Studio,
+    },
     /// 打印视频详情
     Show {
         /// vid为稿件 av 或 bv 号

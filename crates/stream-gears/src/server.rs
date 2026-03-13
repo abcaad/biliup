@@ -16,7 +16,7 @@ use biliup_cli::server::infrastructure::models::StreamerInfo;
 use biliup_cli::server::infrastructure::repositories;
 use biliup_cli::server::infrastructure::repositories::get_upload_config;
 use biliup_cli::server::infrastructure::service_register::ServiceRegister;
-use biliup_cli::uploader::{append, list, login, renew, show, upload_by_command, upload_by_config};
+use biliup_cli::uploader::{append, transfer, list, login, renew, show, upload_by_command, upload_by_config};
 use chrono::Utc;
 use clap::Parser;
 use error_stack::{Report, ResultExt};
@@ -498,6 +498,27 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
                 insert,
+            )
+            .await?
+        }
+        Commands::Transfer {
+            from_vid,
+            to_vid,
+            index,
+            studio: _,
+            submit,
+            insert,
+            retain,
+        } => {
+            transfer(
+                cli.user_cookie,
+                from_vid,
+                to_vid,
+                index,
+                submit.unwrap_or(SubmitOption::App),
+                cli.proxy.as_deref(),
+                insert,
+                retain,
             )
             .await?
         }

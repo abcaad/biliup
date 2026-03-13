@@ -3,7 +3,7 @@ use time::macros::format_description;
 use biliup::uploader::util::SubmitOption;
 use biliup_cli::cli::{Cli, Commands, expand_path};
 use biliup_cli::downloader::{download, generate_json};
-use biliup_cli::uploader::{append, list, login, renew, show, upload_by_command, upload_by_config};
+use biliup_cli::uploader::{append, transfer, list, login, renew, show, upload_by_command, upload_by_config};
 
 use clap::Parser;
 
@@ -97,6 +97,28 @@ async fn main() -> AppResult<()> {
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
                 insert,
+            )
+            .await?
+        }
+        Commands::Transfer {
+            from_vid,
+            to_vid,
+            index,
+            studio: _,
+            submit,
+            insert,
+            retain,
+        } => {
+            let video_path: Vec<_> = video_path.into_iter().map(expand_path).collect();
+            transfer(
+                user_cookie,
+                from_vid,
+                to_vid,
+                index,
+                submit.unwrap_or(SubmitOption::App),
+                cli.proxy.as_deref(),
+                insert,
+                retain,
             )
             .await?
         }

@@ -250,6 +250,74 @@ pub async fn append(
     Ok(())
 }
 
+pub async fn transfer(
+    user_cookie: PathBuf,
+    from_vid: Vid,
+    to_vid: Vid,
+    index: usize,
+    submit: SubmitOption,
+    proxy: Option<&str>,
+    insert: bool,
+    retain: bool,
+) -> AppResult<()> {
+    if index == 0 {
+        return Err(AppError::Custom(
+            "Part number is 0.".to_string(),
+        )
+        .into());
+    }
+    let bilibili = login_by_cookies(user_cookie, proxy).await?;
+    let mut from_studio = bilibili
+        .studio_data(&from_vid, proxy)
+        .await
+        .change_context_lazy(|| AppError::Unknown)?;
+
+    if index > from_studio.videos.len() {
+        return Err(AppError::Custom(
+            format!("Part number is out of range. Max is {}.", from_studio.videos.len()),
+        )
+        .into());
+    }
+    let video = from_studio.videos.remove(index-1);
+
+    let mut to_studio = bilibili
+        .studio_data(&to_vid, proxy)
+        .await
+        .change_context_lazy(|| AppError::Unknown)?;
+
+
+    if insert{
+        to_studio.videos.insert(0, video);
+    }else {
+        to_studio.videos.push(video);
+    }
+    
+    if !retain {
+        match submit {
+            SubmitOption::App => bilibili
+                .edit_by_app(&from_studio, proxy)
+                .await
+                .change_context_lazy(|| AppError::Unknown)?,
+            _ => bilibili
+                .edit_by_web(&from_studio)
+                .await
+                .change_context_lazy(|| AppError::Unknown)?,
+        };
+    }
+    match submit {
+        SubmitOption::App => bilibili
+            .edit_by_app(&to_studio, proxy)
+            .await
+            .change_context_lazy(|| AppError::Unknown)?,
+        _ => bilibili
+            .edit_by_web(&to_studio)
+            .await
+            .change_context_lazy(|| AppError::Unknown)?,
+    };
+    // studio.edit(&login_info).await?;
+    Ok(())
+}
+
 pub async fn show(user_cookie: PathBuf, vid: Vid, proxy: Option<&str>) -> AppResult<()> {
     let bilibili = login_by_cookies(user_cookie, proxy).await?;
     let video_info = bilibili
