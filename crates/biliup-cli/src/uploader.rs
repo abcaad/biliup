@@ -347,7 +347,7 @@ pub async fn add_part(
     if index == 0 {
         studio.videos.push(video);
     }else {
-        studio.videos.insert(index, video);
+        studio.videos.insert(index-1, video);
     }
 
     match submit {
