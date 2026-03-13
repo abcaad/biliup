@@ -109,7 +109,6 @@ async fn main() -> AppResult<()> {
             insert,
             retain,
         } => {
-            let video_path: Vec<_> = video_path.into_iter().map(expand_path).collect();
             transfer(
                 user_cookie,
                 from_vid,
