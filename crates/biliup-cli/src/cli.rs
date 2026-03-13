@@ -118,7 +118,7 @@ pub enum Commands {
         to_vid: Vid,
 
         /// 将要转移的分P序号 从1开始
-        #[arg(long)]
+        #[arg(short, long)]
         index: usize,
 
         /// 新视频添加到稿件最前面
@@ -128,6 +128,37 @@ pub enum Commands {
         /// 保留原分P
         #[arg(long, default_value = "false")]
         retain: bool,
+
+        #[command(flatten)]
+        studio: Studio,
+    },
+    /// 将分P转移到其他稿件  transfer 应该会失败  等待审核通过后手动转移稿件
+    AddPart {
+        /// 提交接口
+        #[arg(long)]
+        submit: Option<SubmitOption>,
+
+        // Optional name to operate on
+        // name: Option<String>,
+        /// vid为稿件 av 或 bv 号
+        #[arg(short, long)]
+        vid: Vid,
+        
+        /// Video 对象的 title
+        #[arg(short, long)]
+        title: Option<String>,
+
+        /// Video 对象的 filename
+        #[arg(short, long)]
+        filename: String,
+
+        /// Video 对象的 desc
+        #[arg(short, long)]
+        desc: String,
+
+        /// 将要添加到的分P序号 从1开始   为 0 时添加到末尾
+        #[arg(long, default_value = "1")]
+        index: usize,
 
         #[command(flatten)]
         studio: Studio,

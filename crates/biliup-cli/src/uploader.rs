@@ -279,6 +279,7 @@ pub async fn transfer(
         .into());
     }
     let video = from_studio.videos.remove(index-1);
+    info!("video info: {:?}.", video);
 
     let mut to_studio = bilibili
         .studio_data(&to_vid, proxy)
@@ -311,6 +312,51 @@ pub async fn transfer(
             .change_context_lazy(|| AppError::Unknown)?,
         _ => bilibili
             .edit_by_web(&to_studio)
+            .await
+            .change_context_lazy(|| AppError::Unknown)?,
+    };
+    // studio.edit(&login_info).await?;
+    Ok(())
+}
+
+pub async fn add_part(
+    user_cookie: PathBuf,
+    vid: Vid,
+    index: usize,
+    submit: SubmitOption,
+    proxy: Option<&str>,
+    title: Option<String>,
+    filename: String,
+    desc: String,
+) -> AppResult<()> {
+    let bilibili = login_by_cookies(user_cookie, proxy).await?;
+    let mut studio = bilibili
+        .studio_data(&vid, proxy)
+        .await
+        .change_context_lazy(|| AppError::Unknown)?;
+
+    if index > studio.videos.len() {
+        return Err(AppError::Custom(
+            format!("Part number is out of range. Max is {}.", studio.videos.len()),
+        )
+        .into());
+    }
+    let video = Video { title, filename, desc };
+    info!("video info: {:?}", video);
+
+    if index == 0 {
+        studio.videos.push(video);
+    }else {
+        studio.videos.insert(index, video);
+    }
+
+    match submit {
+        SubmitOption::App => bilibili
+            .edit_by_app(&studio, proxy)
+            .await
+            .change_context_lazy(|| AppError::Unknown)?,
+        _ => bilibili
+            .edit_by_web(&studio)
             .await
             .change_context_lazy(|| AppError::Unknown)?,
     };

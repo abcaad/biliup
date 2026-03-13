@@ -3,7 +3,7 @@ use time::macros::format_description;
 use biliup::uploader::util::SubmitOption;
 use biliup_cli::cli::{Cli, Commands, expand_path};
 use biliup_cli::downloader::{download, generate_json};
-use biliup_cli::uploader::{append, transfer, list, login, renew, show, upload_by_command, upload_by_config};
+use biliup_cli::uploader::{append, transfer, add_part, list, login, renew, show, upload_by_command, upload_by_config};
 
 use clap::Parser;
 
@@ -118,6 +118,27 @@ async fn main() -> AppResult<()> {
                 cli.proxy.as_deref(),
                 insert,
                 retain,
+            )
+            .await?
+        }
+        Commands::AddPart {
+            vid,
+            index,
+            studio: _,
+            submit,
+            title,
+            filename,
+            desc,
+        } => {
+            add_part(
+                user_cookie,
+                vid,
+                index,
+                submit.unwrap_or(SubmitOption::App),
+                cli.proxy.as_deref(),
+                title,
+                filename,
+                desc,
             )
             .await?
         }
