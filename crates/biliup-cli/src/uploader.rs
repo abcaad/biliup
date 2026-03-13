@@ -218,6 +218,7 @@ pub async fn append(
     limit: usize,
     submit: SubmitOption,
     proxy: Option<&str>,
+    insert: bool,
 ) -> AppResult<()> {
     if video_path.is_empty() {
         return Err(AppError::Custom(
@@ -231,6 +232,9 @@ pub async fn append(
         .studio_data(&vid, proxy)
         .await
         .change_context_lazy(|| AppError::Unknown)?;
+    if insert{
+        std::mem::swap(&mut studio.videos, &mut uploaded_videos);
+    }
     studio.videos.append(&mut uploaded_videos);
     match submit {
         SubmitOption::App => bilibili

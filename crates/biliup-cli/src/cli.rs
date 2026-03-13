@@ -94,6 +94,10 @@ pub enum Commands {
         #[arg(long, default_value = "3")]
         limit: usize,
 
+        /// 新视频添加到稿件最前面
+        #[arg(long, default_value = "false")]
+        insert: bool,
+
         #[command(flatten)]
         studio: Studio,
     },
