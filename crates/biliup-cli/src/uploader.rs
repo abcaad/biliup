@@ -259,12 +259,13 @@ pub async fn append(
 
 pub async fn transfer(
     user_cookie: PathBuf,
-    from_vid: Vid,
-    to_vid: Vid,
+    vid: Vid,
+    // to_vid: Vid,
     index: usize,
     submit: SubmitOption,
     proxy: Option<&str>,
     insert: bool,
+    full: bool,
 ) -> AppResult<()> {
     if index == 0 {
         return Err(AppError::Custom(
@@ -274,7 +275,7 @@ pub async fn transfer(
     }
     let bilibili = login_by_cookies(user_cookie, proxy).await?;
     let mut from_studio = bilibili
-        .studio_data(&from_vid, proxy)
+        .studio_data(&vid, proxy)
         .await
         .change_context_lazy(|| AppError::Unknown)?;
 
@@ -286,18 +287,6 @@ pub async fn transfer(
     }
     let video = from_studio.videos.remove(index-1);
     info!("video info: {}", serde_json::to_string(&video).unwrap_or(format!("Video serialize error, {:?}", video)));
-
-    let mut to_studio = bilibili
-        .studio_data(&to_vid, proxy)
-        .await
-        .change_context_lazy(|| AppError::Unknown)?;
-
-
-    if insert{
-        to_studio.videos.insert(0, video);
-    }else {
-        to_studio.videos.push(video);
-    }
     
     match submit {
         SubmitOption::App => bilibili
@@ -308,7 +297,33 @@ pub async fn transfer(
             .edit_by_web(&from_studio)
             .await
             .change_context_lazy(|| AppError::Unknown)?,
-        };
+    };
+
+    if ! full {
+        return Ok(());
+    }
+    
+    let mut to_studio = bilibili
+        .studio_data(&vid, proxy)
+        .await
+        .change_context_lazy(|| AppError::Unknown)?;
+
+    if insert{
+        to_studio.videos.insert(index-1, video);
+    }else {
+        to_studio.videos.push(video);
+    }
+    
+    // let mut to_studio = bilibili
+    //     .studio_data(&to_vid, proxy)
+    //     .await
+    //     .change_context_lazy(|| AppError::Unknown)?;
+
+    // if insert{
+    //     to_studio.videos.insert(0, video);
+    // }else {
+    //     to_studio.videos.push(video);
+    // }
     match submit {
         SubmitOption::App => bilibili
             .edit_by_app(&to_studio, proxy)
@@ -332,9 +347,9 @@ pub async fn add_part(
     title: Option<String>,
     filename: Option<String>,
     desc: Option<String>,
-    video_json: Option<String>,
+    json_video: Option<String>,
 ) -> AppResult<()> {
-    let video: Video = if let Some(json_str) = video_json{
+    let video: Video = if let Some(json_str) = json_video{
         info!("input json: {}", &json_str);
         serde_json::from_str(&json_str).unwrap()
     }else {

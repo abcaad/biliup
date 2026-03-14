@@ -105,7 +105,7 @@ pub enum Commands {
         // #[command(flatten)]
         // studio: Studio,
     },
-    /// 将分P转移到其他稿件  不可用  仅能删除
+    /// 将分P删除或原地转移  
     Transfer {
         /// 提交接口
         #[arg(long)]
@@ -115,19 +115,23 @@ pub enum Commands {
         // name: Option<String>,
         /// vid为稿件 av 或 bv 号  原分P所在稿件
         #[arg(short, long)]
-        from_vid: Vid,
+        vid: Vid,
 
-        /// vid为稿件 av 或 bv 号  分P将转移到的稿件
-        #[arg(short, long)]
-        to_vid: Vid,
+        // /// vid为稿件 av 或 bv 号  分P将转移到的稿件
+        // #[arg(short, long)]
+        // to_vid: Vid,
 
         /// 将要转移的分P序号 从1开始
         #[arg(short, long)]
         index: usize,
 
-        /// 新视频添加到稿件最前面
+        /// 新视频按原有顺序添加到稿件
         #[arg(long, default_value = "false")]
         insert: bool,
+
+        /// 执行完整函数 添加回原稿件
+        #[arg(short, long, default_value = "false")]
+        full: bool,
 
         // #[command(flatten)]
         // studio: Studio,
@@ -157,11 +161,11 @@ pub enum Commands {
         desc: Option<String>,
 
         /// Video 对象的 json 例如 '{"title":"","filename":"","desc":""}'
-        #[arg(long)]
-        video_json: Option<String>,
+        #[arg(short, long)]
+        json_video: Option<String>,
 
         /// 将要添加到的分P序号 从1开始   为 0 时添加到末尾
-        #[arg(long, default_value = "1")]
+        #[arg(short, long, default_value = "1")]
         index: usize,
 
         // #[command(flatten)]

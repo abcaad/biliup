@@ -103,21 +103,23 @@ async fn main() -> AppResult<()> {
             .await?
         }
         Commands::Transfer {
-            from_vid,
-            to_vid,
+            vid,
+            // to_vid,
             index,
             // studio: _,
             submit,
             insert,
+            full,
         } => {
             transfer(
                 user_cookie,
-                from_vid,
-                to_vid,
+                vid,
+                // to_vid,
                 index,
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
                 insert,
+                full,
             )
             .await?
         }
@@ -129,7 +131,7 @@ async fn main() -> AppResult<()> {
             title,
             filename,
             desc,
-            video_json,
+            json_video,
         } => {
             add_part(
                 user_cookie,
@@ -140,7 +142,7 @@ async fn main() -> AppResult<()> {
                 title,
                 filename,
                 desc,
-                video_json,
+                json_video,
             )
             .await?
         }
