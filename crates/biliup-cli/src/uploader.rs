@@ -218,7 +218,8 @@ pub async fn append(
     limit: usize,
     submit: SubmitOption,
     proxy: Option<&str>,
-    insert: bool,
+    insert: bool,    
+    skip_binding: bool,
 ) -> AppResult<()> {
     if video_path.is_empty() {
         return Err(AppError::Custom(
@@ -228,6 +229,12 @@ pub async fn append(
     }
     let bilibili = login_by_cookies(user_cookie, proxy).await?;
     let mut uploaded_videos = upload(&video_path, &bilibili, line, limit).await?;
+
+    if skip_binding {
+        info!("Skip binding..");
+        return Ok(());
+    }
+
     let mut studio = bilibili
         .studio_data(&vid, proxy)
         .await
@@ -323,9 +330,19 @@ pub async fn add_part(
     submit: SubmitOption,
     proxy: Option<&str>,
     title: Option<String>,
-    filename: String,
-    desc: String,
+    filename: Option<String>,
+    desc: Option<String>,
+    video_json: Option<String>,
 ) -> AppResult<()> {
+    let video: Video = if let Some(json_str) = video_json{
+        info!("input json: {}", &json_str);
+        serde_json::from_str(&json_str).unwrap()
+    }else {
+        info!("input title: {:?}, filename: {:?}, desc: {:?}", &title, &filename, &desc);
+        Video { title, filename: filename.unwrap(), desc: desc.unwrap() }
+    };
+    info!("video info: {:?}", video);
+
     let bilibili = login_by_cookies(user_cookie, proxy).await?;
     let mut studio = bilibili
         .studio_data(&vid, proxy)
@@ -338,8 +355,6 @@ pub async fn add_part(
         )
         .into());
     }
-    let video = Video { title, filename, desc };
-    info!("video info: {:?}", video);
 
     if index == 0 {
         studio.videos.push(video);
@@ -630,8 +645,9 @@ pub async fn upload(
             warn!("Failed to save checkpoint: {}", e);
         } else {
             info!(
-                "Checkpoint saved: {} files uploaded",
-                checkpoint.uploaded_files.len()
+                "Checkpoint saved: {} files uploaded.  Video: {}",
+                checkpoint.uploaded_files.len(),
+                serde_json::to_string(&video).unwrap_or("Video serialize error".to_string())
             );
         }
 

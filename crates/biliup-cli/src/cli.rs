@@ -98,6 +98,10 @@ pub enum Commands {
         #[arg(long, default_value = "false")]
         insert: bool,
 
+        /// 不将新分P添加到稿件中
+        #[arg(long, default_value = "false")]
+        skip_binding: bool,
+
         // #[command(flatten)]
         // studio: Studio,
     },
@@ -128,7 +132,7 @@ pub enum Commands {
         // #[command(flatten)]
         // studio: Studio,
     },
-    /// 将分P转移到其他稿件  transfer 应该会失败  等待审核通过后手动转移稿件
+    /// 将分P转移到其他稿件  transfer 应该会失败  等待审核通过后手动转移稿件  输入 json 或 title filename desc
     AddPart {
         /// 提交接口
         #[arg(long)]
@@ -146,11 +150,15 @@ pub enum Commands {
 
         /// Video 对象的 filename
         #[arg(short, long)]
-        filename: String,
+        filename: Option<String>,
 
         /// Video 对象的 desc
         #[arg(short, long)]
-        desc: String,
+        desc: Option<String>,
+
+        /// Video 对象的 json
+        #[arg(long)]
+        video_json: Option<String>,
 
         /// 将要添加到的分P序号 从1开始   为 0 时添加到末尾
         #[arg(long, default_value = "1")]

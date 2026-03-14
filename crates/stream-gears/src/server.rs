@@ -488,6 +488,7 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
             // studio: _,
             submit,
             insert,
+            skip_binding,
         } => {
             append(
                 cli.user_cookie,
@@ -498,6 +499,7 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
                 insert,
+                skip_binding,
             )
             .await?
         }
@@ -528,6 +530,7 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
             title,
             filename,
             desc,
+            video_json,
         } => {
             add_part(
                 cli.user_cookie,
@@ -538,6 +541,7 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
                 title,
                 filename,
                 desc,
+                video_json,
             )
             .await?
         }

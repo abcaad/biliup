@@ -86,6 +86,7 @@ async fn main() -> AppResult<()> {
             // studio: _,
             submit,
             insert,
+            skip_binding,
         } => {
             let video_path: Vec<_> = video_path.into_iter().map(expand_path).collect();
             append(
@@ -97,6 +98,7 @@ async fn main() -> AppResult<()> {
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
                 insert,
+                skip_binding,
             )
             .await?
         }
@@ -127,6 +129,7 @@ async fn main() -> AppResult<()> {
             title,
             filename,
             desc,
+            video_json,
         } => {
             add_part(
                 user_cookie,
@@ -137,6 +140,7 @@ async fn main() -> AppResult<()> {
                 title,
                 filename,
                 desc,
+                video_json,
             )
             .await?
         }
