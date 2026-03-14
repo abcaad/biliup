@@ -485,7 +485,7 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
             vid,
             line,
             limit,
-            studio: _,
+            // studio: _,
             submit,
             insert,
         } => {
@@ -505,10 +505,9 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
             from_vid,
             to_vid,
             index,
-            studio: _,
+            // studio: _,
             submit,
             insert,
-            retain,
         } => {
             transfer(
                 cli.user_cookie,
@@ -518,18 +517,17 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
                 insert,
-                retain,
             )
             .await?
         }
         Commands::AddPart {
             vid,
             index,
-            studio: _,
+            // studio: _,
             submit,
-            ptitle,
-            pfilename,
-            pdesc,
+            title,
+            filename,
+            desc,
         } => {
             add_part(
                 cli.user_cookie,
@@ -537,9 +535,9 @@ pub(crate) async fn _main(args: &[String]) -> AppResult<()> {
                 index,
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
-                ptitle,
-                pfilename,
-                pdesc,
+                title,
+                filename,
+                desc,
             )
             .await?
         }

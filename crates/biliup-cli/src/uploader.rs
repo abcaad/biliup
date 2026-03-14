@@ -258,7 +258,6 @@ pub async fn transfer(
     submit: SubmitOption,
     proxy: Option<&str>,
     insert: bool,
-    retain: bool,
 ) -> AppResult<()> {
     if index == 0 {
         return Err(AppError::Custom(
@@ -293,18 +292,16 @@ pub async fn transfer(
         to_studio.videos.push(video);
     }
     
-    if !retain {
-        match submit {
-            SubmitOption::App => bilibili
-                .edit_by_app(&from_studio, proxy)
-                .await
-                .change_context_lazy(|| AppError::Unknown)?,
-            _ => bilibili
-                .edit_by_web(&from_studio)
-                .await
-                .change_context_lazy(|| AppError::Unknown)?,
+    match submit {
+        SubmitOption::App => bilibili
+            .edit_by_app(&from_studio, proxy)
+            .await
+            .change_context_lazy(|| AppError::Unknown)?,
+        _ => bilibili
+            .edit_by_web(&from_studio)
+            .await
+            .change_context_lazy(|| AppError::Unknown)?,
         };
-    }
     match submit {
         SubmitOption::App => bilibili
             .edit_by_app(&to_studio, proxy)

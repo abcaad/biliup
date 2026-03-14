@@ -83,7 +83,7 @@ async fn main() -> AppResult<()> {
             vid,
             line,
             limit,
-            studio: _,
+            // studio: _,
             submit,
             insert,
         } => {
@@ -104,10 +104,9 @@ async fn main() -> AppResult<()> {
             from_vid,
             to_vid,
             index,
-            studio: _,
+            // studio: _,
             submit,
             insert,
-            retain,
         } => {
             transfer(
                 user_cookie,
@@ -117,18 +116,17 @@ async fn main() -> AppResult<()> {
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
                 insert,
-                retain,
             )
             .await?
         }
         Commands::AddPart {
             vid,
             index,
-            studio: _,
+            // studio: _,
             submit,
-            ptitle,
-            pfilename,
-            pdesc,
+            title,
+            filename,
+            desc,
         } => {
             add_part(
                 user_cookie,
@@ -136,9 +134,9 @@ async fn main() -> AppResult<()> {
                 index,
                 submit.unwrap_or(SubmitOption::App),
                 cli.proxy.as_deref(),
-                ptitle,
-                pfilename,
-                pdesc,
+                title,
+                filename,
+                desc,
             )
             .await?
         }

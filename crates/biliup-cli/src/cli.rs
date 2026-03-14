@@ -98,8 +98,8 @@ pub enum Commands {
         #[arg(long, default_value = "false")]
         insert: bool,
 
-        #[command(flatten)]
-        studio: Studio,
+        // #[command(flatten)]
+        // studio: Studio,
     },
     /// 将分P转移到其他稿件
     Transfer {
@@ -125,12 +125,8 @@ pub enum Commands {
         #[arg(long, default_value = "false")]
         insert: bool,
 
-        /// 保留原分P
-        #[arg(long, default_value = "false")]
-        retain: bool,
-
-        #[command(flatten)]
-        studio: Studio,
+        // #[command(flatten)]
+        // studio: Studio,
     },
     /// 将分P转移到其他稿件  transfer 应该会失败  等待审核通过后手动转移稿件
     AddPart {
@@ -146,22 +142,22 @@ pub enum Commands {
         
         /// Video 对象的 title
         #[arg(short, long)]
-        ptitle: Option<String>,
+        title: Option<String>,
 
         /// Video 对象的 filename
         #[arg(short, long)]
-        pfilename: String,
+        filename: String,
 
         /// Video 对象的 desc
         #[arg(short, long)]
-        pdesc: String,
+        desc: String,
 
         /// 将要添加到的分P序号 从1开始   为 0 时添加到末尾
         #[arg(long, default_value = "1")]
         index: usize,
 
-        #[command(flatten)]
-        studio: Studio,
+        // #[command(flatten)]
+        // studio: Studio,
     },
     /// 打印视频详情
     Show {
