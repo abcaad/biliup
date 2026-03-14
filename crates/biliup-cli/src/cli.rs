@@ -156,7 +156,7 @@ pub enum Commands {
         #[arg(short, long)]
         desc: Option<String>,
 
-        /// Video 对象的 json
+        /// Video 对象的 json 例如 '{"title":"","filename":"","desc":""}'
         #[arg(long)]
         video_json: Option<String>,
 
