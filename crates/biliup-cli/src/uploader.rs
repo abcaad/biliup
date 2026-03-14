@@ -285,7 +285,7 @@ pub async fn transfer(
         .into());
     }
     let video = from_studio.videos.remove(index-1);
-    info!("video info: {:?}.", video);
+    info!("video info: {}", serde_json::to_string(&video).unwrap_or(format!("Video serialize error, {:?}", video)));
 
     let mut to_studio = bilibili
         .studio_data(&to_vid, proxy)
@@ -341,7 +341,7 @@ pub async fn add_part(
         info!("input title: {:?}, filename: {:?}, desc: {:?}", &title, &filename, &desc);
         Video { title, filename: filename.unwrap(), desc: desc.unwrap() }
     };
-    info!("video info: {:?}", video);
+    info!("video info: {}", serde_json::to_string(&video).unwrap_or(format!("Video serialize error, {:?}", video)));
 
     let bilibili = login_by_cookies(user_cookie, proxy).await?;
     let mut studio = bilibili

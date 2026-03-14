@@ -105,7 +105,7 @@ pub enum Commands {
         // #[command(flatten)]
         // studio: Studio,
     },
-    /// 将分P转移到其他稿件
+    /// 将分P转移到其他稿件  不可用  仅能删除
     Transfer {
         /// 提交接口
         #[arg(long)]
@@ -132,7 +132,7 @@ pub enum Commands {
         // #[command(flatten)]
         // studio: Studio,
     },
-    /// 将分P转移到其他稿件  transfer 应该会失败  等待审核通过后手动转移稿件  输入 json 或 title filename desc
+    /// 将分P添加到其他稿件  输入 json 或 title filename desc
     AddPart {
         /// 提交接口
         #[arg(long)]
