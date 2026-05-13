@@ -149,14 +149,14 @@ impl FfmpegDownloader {
             args.extend(["-headers".to_string(), headers_str]);
         }
 
-        args.extend(self.extra_args_before_input.clone());
-
         // -rw_timeout: 读写超时时间（微秒）
         // 防止网络卡顿导致无限等待
         // args.extend(["-reconnect".to_string(), "1".to_string()]);
         // args.extend(["-reconnect_streamed".to_string(), "1".to_string()]);
         // args.extend(["-reconnect_max_retries".to_string(), "2".to_string()]);
         args.extend(["-rw_timeout".to_string(), "20000000".to_string()]);
+
+        args.extend(self.extra_args_before_input.clone());
 
         // 对于m3u8流的特殊处理
         if download_config.url.contains(".m3u8") {
